@@ -1,5 +1,0 @@
-sceneSetups:
-- path: Assets/Simasart/Hungry Bat/Demos/HungryBat_CompletePopup.unity
-  isLoaded: 1
-  isActive: 1
-  isSubScene: 0
