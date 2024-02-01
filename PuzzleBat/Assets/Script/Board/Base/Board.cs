@@ -5,29 +5,39 @@ using UnityEngine.Pool;
 
 public class Board : MonoBehaviour
 {
-    // cell         위치 r->c 순
+    // cell
     [SerializeField]
-    private List<GameObject> cells;
+    private Cell cell;
 
-    // block        오브젝트
-    //protected IObjectPool<Block> blockPool;
+    // block
+    [SerializeField]
+    private BaseObjectPool blockPool;
 
     // 기타 변수
     private int totalCellCnt = 0;
 
-    public virtual void Init(int cellCnt)
+    public virtual void Init()
     {
-        this.totalCellCnt = cellCnt;
+        totalCellCnt = cell.Count();
+        blockPool.Pool.Clear();
+    }
 
-        for(int i = 0; i < cellCnt; i++)
-        {
-            //blockPool.Get();
-        }
+    // TODO 지울 예정
+    public void Start()
+    {
+        Fill();
     }
 
     public virtual void Fill()
     {
-
+        // TODO 나머지 작성, 테스트 코드
+        GameObject rc11 = cell.GetRCCell(1, 1);
+        GameObject block = blockPool.Pool.Get();
+        
+        block.transform.SetParent(rc11.transform);
+        // ??? 어째서 포지션 변경이 안되징..? 와이??
+        // TODO 디버깅..
+        block.transform.position = Vector3.zero;
     }
 
     public virtual void Match()

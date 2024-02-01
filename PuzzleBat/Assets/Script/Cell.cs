@@ -21,4 +21,16 @@ public class Cell : MonoBehaviour
 
         return rcCells[row].arry[col];
     }
+
+    public int Count()
+    {
+        int cnt = 0;
+
+        foreach(N_Array cell in rcCells)
+        {
+            cnt += cell.arry.Length;
+        }
+
+        return cnt;
+    }
 }
