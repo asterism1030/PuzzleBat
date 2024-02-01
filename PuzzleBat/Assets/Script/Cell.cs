@@ -4,15 +4,21 @@ using UnityEngine;
 
 public class Cell : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    [SerializeField]
+    private N_Array[] rcCells;
 
-    // Update is called once per frame
-    void Update()
+    public GameObject GetRCCell(int row, int col)
     {
-        
+        if(row < 0 || row > rcCells.Length)
+        {
+            return null;
+        }
+
+        if(col < 0 || col > rcCells[row].arry.Length)
+        {
+            return null;
+        }
+
+        return rcCells[row].arry[col];
     }
 }
