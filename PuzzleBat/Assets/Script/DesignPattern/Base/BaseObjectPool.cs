@@ -33,7 +33,7 @@ public class BaseObjectPool : MonoBehaviour
     {
         int rand = Random.Range(0, goPref.Count);
 
-        var obj = Instantiate(goPref[rand], goPref[rand].transform);
+        var obj = Instantiate(goPref[rand], goPref[rand].transform.parent);
         obj.SetActive(false);
 
         return obj;

@@ -16,28 +16,47 @@ public class Board : MonoBehaviour
     // 기타 변수
     private int totalCellCnt = 0;
 
+    #region MonoBehaviour
+    public void Start()
+    {
+        Fill();
+    }
+    #endregion
+
+    #region EtcFunc
     public virtual void Init()
     {
         totalCellCnt = cell.Count();
         blockPool.Pool.Clear();
     }
 
-    // TODO 지울 예정
-    public void Start()
-    {
-        Fill();
-    }
-
     public virtual void Fill()
     {
-        // TODO 나머지 작성, 테스트 코드
-        GameObject rc11 = cell.GetRCCell(1, 1);
-        GameObject block = blockPool.Pool.Get();
-        
-        block.transform.SetParent(rc11.transform);
-        // ??? 어째서 포지션 변경이 안되징..? 와이??
-        // TODO 디버깅..
-        block.transform.position = Vector3.zero;
+        int rowCnt = cell.MaxRowCnt();
+        int colCnt = cell.MaxColCnt();
+
+        for(int i = 0; i < rowCnt; i++)
+        {
+            for(int j = 0; j < colCnt; j++)
+            {
+                GameObject rc = cell.GetRCCell(i, j);
+
+                if(rc == null)
+                {
+                    continue;
+                }
+
+                GameObject block = blockPool.Pool.Get();
+
+                block.transform.SetParent(rc.transform);
+                block.transform.position = rc.transform.position;
+            }
+        }
+    }
+
+    public virtual void Refill()
+    {
+
     }
 
     public virtual void Match()
@@ -62,4 +81,5 @@ public class Board : MonoBehaviour
 
         return null;
     }
+    #endregion
 }
