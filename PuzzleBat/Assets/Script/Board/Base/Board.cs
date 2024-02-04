@@ -39,7 +39,7 @@ public class Board : MonoBehaviour
 
             Block block = hit.transform.GetComponent<Block>();
 
-            if (block.IsSelected == true)
+            if (block.IsSelected == true || selectedBlocks.Contains(block))
             {
                 block.ToggleBlockSelect();
                 selectedBlocks.Remove(block);
@@ -50,13 +50,18 @@ public class Board : MonoBehaviour
             selectedBlocks.Add(block);
             block.ToggleBlockSelect();
 
-            if(selectedBlocks.Count == 2)
+            if (selectedBlocks.Count == 2)
             {
-                // TODO) Swap 조건 (같은 Row 이거나 Col)
+                // Swap (같은 Row 이거나 Col)
+                List<int> block1RC = selectedBlocks[0].GetRowCol();
+                List<int> block2RC = selectedBlocks[1].GetRowCol();
 
-                Swap(selectedBlocks.First<Block>(), selectedBlocks.Last<Block>());
-                // TODO) Match
+                if (block1RC[0] == block2RC[0] || block1RC[1] == block2RC[1])
+                {
+                    Swap(selectedBlocks[0], selectedBlocks[1]);
 
+                    // TODO) Match
+                }
 
                 /*
                 foreach (Block sb in selectedBlocks)
@@ -96,10 +101,9 @@ public class Board : MonoBehaviour
                     continue;
                 }
 
-                GameObject block = blockPool.Pool.Get();
+                Block block = blockPool.Pool.Get().GetComponent<Block>();
 
-                block.transform.SetParent(rc.transform);
-                block.transform.position = rc.transform.position;
+                block.Put(rc);
             }
         }
     }
@@ -109,25 +113,27 @@ public class Board : MonoBehaviour
 
     }
 
-    public virtual void Match()
+    public virtual void Match(int row, int col)
     {
-        //// First
-        // 상
+        List<Block> matched = new List<Block>();
 
-        // 하
+        // 상 -> 하
+        int upRange = (row - 2) < 0 ? 0 : row - 2;
+        int downRange = (row + 2) >= cell.MaxRowCnt() ? cell.MaxRowCnt() - 1 : row + 2;
 
-        // 좌
+        for(int i = upRange; i <= downRange; i++)
+        {
+            // TODO) 아래 코드 캡슐화 하면 깔끔할 것 같다
+            Block rcB = cell.GetRCCell(i, col).transform.GetChild(0).GetComponent<Block>();
 
-        // 우
+            // TODO) 한 줄에서 가장 긴 연속되는 같은 블록
+        }
 
-        //// Last
-        // 상
 
-        // 하
+        // 좌 -> 우
 
-        // 좌
 
-        // 우
+
     }
 
     public virtual void Clear()
@@ -142,14 +148,10 @@ public class Board : MonoBehaviour
 
     public virtual void Swap(Block block1, Block block2)
     {
-        Transform block1Transform = block1.transform;
-        Transform block1Parent = block1.transform.parent;
+        GameObject block1Parent = block1.transform.parent.gameObject;
 
-        block1.transform.SetParent(block2.transform.parent);
-        block2.transform.SetParent(block1Parent);
-
-        block1.transform.DOMove(block2.transform.position, 0.5f);
-        block2.transform.DOMove(block1Transform.position, 0.5f);
+        block1.Move(block2.transform.parent.gameObject);
+        block2.Move(block1Parent);
     }
     #endregion
 }
