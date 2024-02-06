@@ -2,6 +2,7 @@ using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -50,6 +51,12 @@ public class Board : MonoBehaviour
             selectedBlocks.Add(block);
             block.ToggleBlockSelect();
 
+            // TODO) row col 검사
+            //List<int> test = block.GetRowCol();
+            //Debug.Log(test[0] + ", " + test[1]);
+            //return;
+            //////////////////////////
+
             if (selectedBlocks.Count == 2)
             {
                 // Swap (같은 Row 이거나 Col)
@@ -60,7 +67,8 @@ public class Board : MonoBehaviour
                 {
                     Swap(selectedBlocks[0], selectedBlocks[1]);
 
-                    // TODO) Match
+                    Match(block1RC[0], block1RC[1]);
+                    Match(block2RC[0], block2RC[1]);
                 }
 
                 /*
@@ -119,24 +127,82 @@ public class Board : MonoBehaviour
 
         // 상 -> 하
         int upRange = (row - 2) < 0 ? 0 : row - 2;
-        int downRange = (row + 2) >= cell.MaxRowCnt() ? cell.MaxRowCnt() - 1 : row + 2;
+        int downRange = (row + 3) > cell.MaxRowCnt() ? cell.MaxRowCnt() : row + 3;
 
-        for(int i = upRange; i <= downRange; i++)
+        for(int i = upRange; i < downRange; i++)
         {
-            // TODO) 아래 코드 캡슐화 하면 깔끔할 것 같다
-            Block rcB = cell.GetRCCell(i, col).transform.GetChild(0).GetComponent<Block>();
+            Block rcB = cell.GetBlock(i, col);
 
-            // TODO) 한 줄에서 가장 긴 연속되는 같은 블록
+            if (rcB == null)
+            {
+                break;
+            }
+
+            if (matched.Count() != 0 && matched[0].GetBlockType() != rcB.GetBlockType())
+            {
+                if (matched.Count() < 3)
+                {
+                    matched.Clear();
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            matched.Add(rcB);
+
         }
 
+        if(matched.Count >= 3)
+        {
+            foreach (Block rcB in matched)
+            {
+                rcB.Release(blockPool);
+            }
+        }
 
         // 좌 -> 우
+        matched.Clear();
 
+        upRange = (col - 2) < 0 ? 0 : col - 2;
+        downRange = (col + 3) > cell.MaxColCnt() ? cell.MaxColCnt() : col + 3;
 
+        for (int i = upRange; i < downRange; i++)
+        {
+            Block rcB = cell.GetBlock(row, i);
 
+            if(rcB == null)
+            {
+                break;
+            }
+
+            if (matched.Count() != 0 && matched[0].GetBlockType() != rcB.GetBlockType())
+            {
+                if(matched.Count() < 3)
+                {
+                    matched.Clear();
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            matched.Add(rcB);
+
+        }
+
+        if (matched.Count >= 3)
+        {
+            foreach (Block rcB in matched)
+            {
+                rcB.Release(blockPool);
+            }
+        }
     }
 
-    public virtual void Clear()
+    public virtual void Clear(bool isAll, List<Block> blocks)
     {
 
     }

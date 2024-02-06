@@ -4,5 +4,5 @@ using UnityEngine;
 
 public class Board_Map1 : Board
 {
-    
+
 }

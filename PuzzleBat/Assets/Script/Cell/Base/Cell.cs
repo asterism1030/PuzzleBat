@@ -78,4 +78,11 @@ public class Cell : MonoBehaviour
 
         return cnt;
     }
+
+    public virtual Block GetBlock(int row, int col)
+    {
+        Transform child = GetRCCell(row, col).transform.GetChild(0);
+
+        return (child == null) ? null : child.GetComponent<Block>();
+    }
 }

@@ -2,6 +2,7 @@ using DG.Tweening;
 using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Block : MonoBehaviour
@@ -20,6 +21,15 @@ public class Block : MonoBehaviour
         isSelected = !isSelected;
 
         visual.color = isSelected ? Color.gray : Color.white;
+    }
+
+    // TODO) 수정 예정
+    public void Release(BaseObjectPool blockPool)
+    {
+        visual.color = Color.red;
+
+        // TODO) 애니메이션 효과, 0.3f 정도 딜레이 후 Release
+        blockPool.Pool.Release(this.gameObject);
     }
 
     public void Move(GameObject targetCellObj)
