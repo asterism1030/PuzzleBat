@@ -14,7 +14,7 @@ public class Board : MonoBehaviour
 
     // block
     [SerializeField]
-    private BaseObjectPool blockPool;
+    private BlockPool blockPool;
 
     // 기타 변수
     private int totalCellCnt = 0;
@@ -40,48 +40,7 @@ public class Board : MonoBehaviour
 
             Block block = hit.transform.GetComponent<Block>();
 
-            if (block.IsSelected == true || selectedBlocks.Contains(block))
-            {
-                block.ToggleBlockSelect();
-                selectedBlocks.Remove(block);
-
-                return;
-            }
-
-            selectedBlocks.Add(block);
-            block.ToggleBlockSelect();
-
-            // TODO) row col 검사
-            //List<int> test = block.GetRowCol();
-            //Debug.Log(test[0] + ", " + test[1]);
-            //return;
-            //////////////////////////
-
-            if (selectedBlocks.Count == 2)
-            {
-                // Swap (같은 Row 이거나 Col)
-                List<int> block1RC = selectedBlocks[0].GetRowCol();
-                List<int> block2RC = selectedBlocks[1].GetRowCol();
-
-                if (block1RC[0] == block2RC[0] || block1RC[1] == block2RC[1])
-                {
-                    Swap(selectedBlocks[0], selectedBlocks[1]);
-
-                    Match(block1RC[0], block1RC[1]);
-                    Match(block2RC[0], block2RC[1]);
-                }
-
-                /*
-                foreach (Block sb in selectedBlocks)
-                {
-                    sb.ToggleBlockSelect();
-                }
-
-                selectedBlocks.Clear();
-                */
-            }
-
-            
+            Select(block);
         }
     }
     #endregion
@@ -90,7 +49,7 @@ public class Board : MonoBehaviour
     public virtual void Init()
     {
         totalCellCnt = cell.Count();
-        blockPool.Pool.Clear();
+        blockPool.Clear();
     }
 
     public virtual void Fill()
@@ -109,7 +68,7 @@ public class Board : MonoBehaviour
                     continue;
                 }
 
-                Block block = blockPool.Pool.Get().GetComponent<Block>();
+                Block block = blockPool.Get();
 
                 block.Put(rc);
             }
@@ -121,8 +80,50 @@ public class Board : MonoBehaviour
 
     }
 
-    public virtual void Match(int row, int col)
+    public virtual void Select(Block block)
     {
+        if (block.IsSelected == true || selectedBlocks.Contains(block))
+        {
+            block.ToggleBlockSelect();
+            selectedBlocks.Remove(block);
+
+            return;
+        }
+
+        selectedBlocks.Add(block);
+        block.ToggleBlockSelect();
+
+        if (selectedBlocks.Count == 2)
+        {
+            // Swap (같은 Row 이거나 Col)
+            List<int> block1RC = selectedBlocks[0].GetRowCol();
+            List<int> block2RC = selectedBlocks[1].GetRowCol();
+
+            if (Mathf.Abs(block1RC[0] - block2RC[0]) + Mathf.Abs(block1RC[1] - block2RC[1]) == 1)
+            {
+                Swap(selectedBlocks[0], selectedBlocks[1]);
+
+                List<Block> matched = Match(block1RC[0], block1RC[1]);
+                matched.AddRange(Match(block2RC[0], block2RC[1]));
+
+                // TODO) matched sorting (클릭한 블록 중심으로)
+
+                Release(matched);
+            }
+
+            foreach (Block sb in selectedBlocks)
+            {
+                sb.ToggleBlockSelect();
+            }
+
+            selectedBlocks.Clear();
+        }
+    }
+
+    public virtual List<Block> Match(int row, int col)
+    {
+        List<Block> result = new List<Block>();
+
         List<Block> matched = new List<Block>();
 
         // 상 -> 하
@@ -151,15 +152,11 @@ public class Board : MonoBehaviour
             }
 
             matched.Add(rcB);
-
         }
 
         if(matched.Count >= 3)
         {
-            foreach (Block rcB in matched)
-            {
-                rcB.Release(blockPool);
-            }
+            result.AddRange(matched);
         }
 
         // 좌 -> 우
@@ -195,14 +192,18 @@ public class Board : MonoBehaviour
 
         if (matched.Count >= 3)
         {
-            foreach (Block rcB in matched)
-            {
-                rcB.Release(blockPool);
-            }
+            result.AddRange(matched);
         }
+
+        return result;
     }
 
-    public virtual void Clear(bool isAll, List<Block> blocks)
+    public virtual void Release(List<Block> blocks)
+    {
+        blockPool.Release(blocks);
+    }
+
+    public virtual void Clear()
     {
 
     }
@@ -214,10 +215,10 @@ public class Board : MonoBehaviour
 
     public virtual void Swap(Block block1, Block block2)
     {
-        GameObject block1Parent = block1.transform.parent.gameObject;
+        GameObject block1RCCell = block1.GetRCCell();
 
-        block1.Move(block2.transform.parent.gameObject);
-        block2.Move(block1Parent);
+        block1.Move(block2.GetRCCell());
+        block2.Move(block1RCCell);
     }
     #endregion
 }

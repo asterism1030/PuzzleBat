@@ -15,6 +15,11 @@ public class Block : MonoBehaviour
     // getter setter
     public bool IsSelected { get { return isSelected; } set { isSelected = value; } }
 
+    public void Init()
+    {
+        visual.color = Color.white;
+        IsSelected = false;
+    }
 
     public void ToggleBlockSelect()
     {
@@ -23,19 +28,16 @@ public class Block : MonoBehaviour
         visual.color = isSelected ? Color.gray : Color.white;
     }
 
-    // TODO) 수정 예정
-    public void Release(BaseObjectPool blockPool)
+    // TODO) 애님이펙 효과 추가 예정
+    public void RemoveAnimEffect()
     {
         visual.color = Color.red;
-
-        // TODO) 애니메이션 효과, 0.3f 정도 딜레이 후 Release
-        blockPool.Pool.Release(this.gameObject);
     }
 
-    public void Move(GameObject targetCellObj)
+    public void Move(GameObject rcCell)
     {
-        this.gameObject.transform.SetParent(targetCellObj.transform);
-        this.gameObject.transform.DOMove(targetCellObj.transform.position, 0.5f);
+        this.gameObject.transform.SetParent(rcCell.gameObject.transform);
+        this.gameObject.transform.DOMove(rcCell.gameObject.transform.position, 0.5f);
     }
 
     public void Put(GameObject targetCellObj)
@@ -67,5 +69,15 @@ public class Block : MonoBehaviour
     public string GetBlockType()
     {
         return this.transform.name;
+    }
+
+    public GameObject GetRCCell()
+    {
+        if(transform.parent == null || transform.parent.parent.GetComponent<Cell>() == null)
+        {
+            return null;
+        }
+
+        return transform.parent.gameObject;
     }
 }
