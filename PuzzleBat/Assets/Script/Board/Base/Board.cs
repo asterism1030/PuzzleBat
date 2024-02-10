@@ -23,7 +23,7 @@ public class Board : MonoBehaviour
     #region MonoBehaviour
     public void Start()
     {
-        Fill();
+        Init();
     }
 
     void Update()
@@ -40,7 +40,9 @@ public class Board : MonoBehaviour
 
             Block block = hit.transform.GetComponent<Block>();
 
+            // TODO) Select 내부 함수 분리
             Select(block);
+            
         }
     }
     #endregion
@@ -50,10 +52,7 @@ public class Board : MonoBehaviour
     {
         totalCellCnt = cell.Count();
         blockPool.Clear();
-    }
 
-    public virtual void Fill()
-    {
         int rowCnt = cell.MaxRowCnt();
         int colCnt = cell.MaxColCnt();
 
@@ -61,7 +60,7 @@ public class Board : MonoBehaviour
         {
             for (int j = 0; j < colCnt; j++)
             {
-                GameObject rc = cell.GetRCCell(i, j);
+                RCCell rc = cell.GetRCCell(i, j);
 
                 if (rc == null)
                 {
@@ -73,6 +72,26 @@ public class Board : MonoBehaviour
                 block.Put(rc);
             }
         }
+    }
+
+    public virtual void Fill(int col)
+    {
+        // TODO) 리팩토링
+        int rowCnt = cell.MaxRowCnt();
+        int colCnt = cell.MaxColCnt();
+
+        for (int i = rowCnt - 1; i >= 0; i--)
+        {
+            RCCell rc = cell.GetRCCell(i, colCnt);
+
+            if (rc == null || rc.GetBlock() == null)
+            {
+                continue;
+            }
+
+            StartCoroutine(rc.GetBlock().Fall());
+        }
+
     }
 
     public virtual void Refill()
@@ -108,7 +127,10 @@ public class Board : MonoBehaviour
 
                 // TODO) matched sorting (클릭한 블록 중심으로)
 
-                Release(matched);
+                Clear(matched);
+                // TODO) test
+                Fill(block1RC[1]);
+                //Fill(block2RC[1]);
             }
 
             foreach (Block sb in selectedBlocks)
@@ -132,12 +154,12 @@ public class Board : MonoBehaviour
 
         for(int i = upRange; i < downRange; i++)
         {
-            Block rcB = cell.GetBlock(i, col);
-
-            if (rcB == null)
+            if (cell.GetRCCell(i, col) == null)
             {
                 break;
             }
+
+            Block rcB = cell.GetRCCell(i, col).GetBlock();
 
             if (matched.Count() != 0 && matched[0].GetBlockType() != rcB.GetBlockType())
             {
@@ -167,12 +189,12 @@ public class Board : MonoBehaviour
 
         for (int i = upRange; i < downRange; i++)
         {
-            Block rcB = cell.GetBlock(row, i);
-
-            if(rcB == null)
+            if(cell.GetRCCell(row, i) == null)
             {
                 break;
             }
+
+            Block rcB = cell.GetRCCell(row, i).GetBlock();
 
             if (matched.Count() != 0 && matched[0].GetBlockType() != rcB.GetBlockType())
             {
@@ -198,7 +220,7 @@ public class Board : MonoBehaviour
         return result;
     }
 
-    public virtual void Release(List<Block> blocks)
+    public virtual void Clear(List<Block> blocks)
     {
         blockPool.Release(blocks);
     }
@@ -215,10 +237,11 @@ public class Board : MonoBehaviour
 
     public virtual void Swap(Block block1, Block block2)
     {
-        GameObject block1RCCell = block1.GetRCCell();
+        RCCell block1RCCell = block1.GetRCCell();
 
         block1.Move(block2.GetRCCell());
         block2.Move(block1RCCell);
     }
+
     #endregion
 }

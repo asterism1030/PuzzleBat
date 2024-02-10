@@ -34,34 +34,81 @@ public class Block : MonoBehaviour
         visual.color = Color.red;
     }
 
-    public void Move(GameObject rcCell)
+    public IEnumerator Fall()
     {
-        this.gameObject.transform.SetParent(rcCell.gameObject.transform);
-        this.gameObject.transform.DOMove(rcCell.gameObject.transform.position, 0.5f);
+        // 최하, 최좌하, 최우하
+        RCCell downCell = GetRCCell().GetDownCell();
+        RCCell leftCell = (GetRCCell().GetDownCell() == null) ? null : GetRCCell().GetDownCell().GetLeftCell();
+        RCCell rightCell = (GetRCCell().GetDownCell() == null) ? null : GetRCCell().GetDownCell().GetRightCell();
+
+        while (downCell != null)
+        {
+            if ((downCell.GetDownCell() == null) || (downCell.GetDownCell().IsFilled() == true))
+            {
+                break;
+            }
+            downCell = downCell.GetDownCell();
+        }
+
+        while (leftCell != null)
+        {
+            if ((leftCell.GetDownCell() == null) || (leftCell.GetDownCell().IsFilled() == true))
+            {
+                break;
+            }
+            leftCell = leftCell.GetDownCell();
+        }
+
+        while (rightCell != null)
+        {
+            if ((rightCell.GetDownCell() == null) || (rightCell.GetDownCell().IsFilled() == true))
+            {
+                break;
+            }
+            rightCell = rightCell.GetDownCell();
+        }
+
+
+        if (downCell == null)
+        {
+            yield break;
+        }
+
+        bool isFilled = downCell.IsFilled();
+
+        if (isFilled == false)
+        {
+            Move(downCell);
+        }
+
+        // TODO) 흘러내리기
+
+        yield return null;
     }
 
-    public void Put(GameObject targetCellObj)
+    public void Move(RCCell rcCell)
     {
-        this.transform.SetParent(targetCellObj.transform);
-        this.transform.position = targetCellObj.transform.position;
+        transform.SetParent(rcCell.gameObject.transform);
+        transform.DOMove(rcCell.gameObject.transform.position, 0.5f);
+    }
+
+    public void Put(RCCell rc)
+    {
+        this.transform.SetParent(rc.transform);
+        this.transform.position = rc.transform.position;
     }
 
     public List<int> GetRowCol()
     {
         List<int> rc = new List<int> { -1, -1 };
 
-        if (this.transform.parent == null || 
-            this.transform.parent.parent == null ||
-            this.transform.parent.parent.GetComponent<Cell>() == null)
+        if (transform.parent == null || transform.parent.GetComponent<RCCell>() == null)
         {
             return rc;
         }
 
-        string cellName = this.transform.parent.name;
-        string[] rcInfo = cellName.Split('_')[1].Split(',');
-
-        rc[0] = int.Parse(rcInfo[0]);
-        rc[1] = int.Parse(rcInfo[1]);
+        rc[0] = transform.parent.GetComponent<RCCell>().Row;
+        rc[1] = transform.parent.GetComponent<RCCell>().Col;
 
         return rc;
     }
@@ -71,13 +118,13 @@ public class Block : MonoBehaviour
         return this.transform.name;
     }
 
-    public GameObject GetRCCell()
+    public RCCell GetRCCell()
     {
-        if(transform.parent == null || transform.parent.parent.GetComponent<Cell>() == null)
+        if(transform.parent == null || transform.parent.GetComponent<RCCell>() == null)
         {
             return null;
         }
 
-        return transform.parent.gameObject;
+        return transform.parent.GetComponent<RCCell>();
     }
 }

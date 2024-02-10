@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Cell_8x8_Cross : Cell
 {
-    public override GameObject GetRCCell(int row, int col)
+    public override RCCell GetRCCell(int row, int col)
     {
         if((row == 0 && col == 0) || (row == 0 && col == 7)
             || (row == 7 && col == 0) || (row == 7 && col == 7))
@@ -33,15 +33,4 @@ public class Cell_8x8_Cross : Cell
         return 8;
     }
 
-    public override Block GetBlock(int row, int col)
-    {
-        if(this.GetRCCell(row, col) == null)
-        {
-            return null;
-        }
-
-        Transform child = this.GetRCCell(row, col).transform.GetChild(0);
-
-        return (child == null) ? null : child.GetComponent<Block>();
-    }
 }

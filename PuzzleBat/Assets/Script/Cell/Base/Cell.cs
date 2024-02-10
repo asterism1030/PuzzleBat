@@ -7,12 +7,34 @@ public class Cell : MonoBehaviour
     [SerializeField]
     private N_Array[] rcCells;
 
-    public virtual GameObject GetFirstRCCell()
+    void Start()
     {
-        return rcCells[0].arry[0];
+        Init();
     }
 
-    public virtual GameObject GetRCCell(int row, int col)
+    public void Init()
+    {
+        int rowCnt = MaxRowCnt();
+        int colCnt = MaxColCnt();
+
+        for (int i = 0; i < rowCnt; i++)
+        {
+            for (int j = 0; j < colCnt; j++)
+            {
+                if (GetRCCell(i, j) == null)
+                {
+                    continue;
+                }
+
+                RCCell rc = GetRCCell(i, j).GetComponent<RCCell>();
+
+                rc.Row = i;
+                rc.Col = j;
+            }
+        }
+    }
+
+    public virtual RCCell GetRCCell(int row, int col)
     {
         if(row < 0 || row >= rcCells.Length)
         {
@@ -24,26 +46,7 @@ public class Cell : MonoBehaviour
             return null;
         }
 
-        return rcCells[row].arry[col];
-    }
-
-    public virtual GameObject GetRCCellByName(string name)
-    {
-        GameObject findedObj = null;
-
-        foreach(N_Array cell in rcCells)
-        {
-            foreach(GameObject go in cell.arry)
-            {
-                if(go.name.Equals(name))
-                {
-                    findedObj = go;
-                    break;
-                }
-            }
-        }
-
-        return findedObj;
+        return rcCells[row].arry[col].GetComponent<RCCell>();
     }
 
     public int Count()
@@ -79,10 +82,5 @@ public class Cell : MonoBehaviour
         return cnt;
     }
 
-    public virtual Block GetBlock(int row, int col)
-    {
-        Transform child = GetRCCell(row, col).transform.GetChild(0);
-
-        return (child == null) ? null : child.GetComponent<Block>();
-    }
+    
 }
