@@ -5,6 +5,12 @@ using UnityEngine;
 
 public class BlockPool : BaseObjectPool
 {
+    private bool isReleasing = true;
+
+    // getter setter
+    public bool IsReleasing { get { return isReleasing; } }
+
+
     public void Start()
     {
         CheckPref();
@@ -32,6 +38,7 @@ public class BlockPool : BaseObjectPool
 
     public void Release(List<Block> blocks)
     {
+        isReleasing = true;
         StartCoroutine(RemoveBlock(blocks));
     }
 
@@ -52,8 +59,7 @@ public class BlockPool : BaseObjectPool
             Pool.Release(block.gameObject);
         }
 
-        // TODO) 분리 예정
-
+        isReleasing = false;
 
         yield break;
     }

@@ -1,5 +1,6 @@
 using DG.Tweening;
 using JetBrains.Annotations;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -15,10 +16,15 @@ public class Block : MonoBehaviour
     // getter setter
     public bool IsSelected { get { return isSelected; } set { isSelected = value; } }
 
+    // Action / Func
+    //public Action<bool> BoardDelegate;
+
     public void Init()
     {
         visual.color = Color.white;
         IsSelected = false;
+
+        //BoardDelegate += Drop;
     }
 
     public void ToggleBlockSelect()
@@ -34,12 +40,34 @@ public class Block : MonoBehaviour
         visual.color = Color.red;
     }
 
+
+    // TODO) 명명 변경
+    public void Drop(bool isAnyCellEmpty)
+    {
+        if(isAnyCellEmpty == true)
+        {
+            StartCoroutine(Fall());
+        }
+        else
+        {
+            StopCoroutine(Fall());
+        }
+    }
+
     public IEnumerator Fall()
     {
         // 최하, 최좌하, 최우하
         RCCell downCell = GetRCCell().GetDownCell();
-        RCCell leftCell = (GetRCCell().GetDownCell() == null) ? null : GetRCCell().GetDownCell().GetLeftCell();
-        RCCell rightCell = (GetRCCell().GetDownCell() == null) ? null : GetRCCell().GetDownCell().GetRightCell();
+
+        if (downCell == null)
+        {
+            yield break;
+        }
+
+        if(downCell.IsFilled() == true)
+        {
+            yield return null;
+        }
 
         while (downCell != null)
         {
@@ -47,41 +75,11 @@ public class Block : MonoBehaviour
             {
                 break;
             }
+
             downCell = downCell.GetDownCell();
         }
 
-        while (leftCell != null)
-        {
-            if ((leftCell.GetDownCell() == null) || (leftCell.GetDownCell().IsFilled() == true))
-            {
-                break;
-            }
-            leftCell = leftCell.GetDownCell();
-        }
-
-        while (rightCell != null)
-        {
-            if ((rightCell.GetDownCell() == null) || (rightCell.GetDownCell().IsFilled() == true))
-            {
-                break;
-            }
-            rightCell = rightCell.GetDownCell();
-        }
-
-
-        if (downCell == null)
-        {
-            yield break;
-        }
-
-        bool isFilled = downCell.IsFilled();
-
-        if (isFilled == false)
-        {
-            Move(downCell);
-        }
-
-        // TODO) 흘러내리기
+        Move(downCell);
 
         yield return null;
     }

@@ -1,4 +1,5 @@
 using DG.Tweening;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,9 @@ public class Board : MonoBehaviour
     // block
     [SerializeField]
     private BlockPool blockPool;
+
+    // Action / Func
+    public Action<bool> BlockDelegate;
 
     // 기타 변수
     private int totalCellCnt = 0;
@@ -70,33 +74,20 @@ public class Board : MonoBehaviour
                 Block block = blockPool.Get();
 
                 block.Put(rc);
+                BlockDelegate += block.Drop;
             }
         }
     }
 
-    public virtual void Fill(int col)
+    // TODO) Test
+    public virtual void Drop(bool isAnyCellEmpty)
     {
-        // TODO) 리팩토링
-        int rowCnt = cell.MaxRowCnt();
-        int colCnt = cell.MaxColCnt();
-
-        for (int i = rowCnt - 1; i >= 0; i--)
-        {
-            RCCell rc = cell.GetRCCell(i, colCnt);
-
-            if (rc == null || rc.GetBlock() == null)
-            {
-                continue;
-            }
-
-            StartCoroutine(rc.GetBlock().Fall());
-        }
-
+        BlockDelegate(isAnyCellEmpty);
     }
 
     public virtual void Refill()
     {
-
+        // TODO) 더이상의 Refill 이 필요 없을 경우 Block 들에게 알림
     }
 
     public virtual void Select(Block block)
@@ -129,8 +120,7 @@ public class Board : MonoBehaviour
 
                 Clear(matched);
                 // TODO) test
-                Fill(block1RC[1]);
-                //Fill(block2RC[1]);
+                Drop(true);
             }
 
             foreach (Block sb in selectedBlocks)
