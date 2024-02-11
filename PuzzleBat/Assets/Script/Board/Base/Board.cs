@@ -120,7 +120,7 @@ public class Board : MonoBehaviour
 
                 Clear(matched);
                 // TODO) test
-                //Drop(true);
+                Drop(true);
             }
 
             foreach (Block sb in selectedBlocks)

@@ -63,7 +63,7 @@ public class Block : MonoBehaviour
 
             if (downCell == null)
             {
-                Debug.Log(GetRowCol()[0] + ", " + GetRowCol()[1] + " downcell null");
+                //Debug.Log(GetRowCol()[0] + ", " + GetRowCol()[1] + " downcell null");
                 yield break;
             }
 
@@ -82,7 +82,7 @@ public class Block : MonoBehaviour
                 downCell = downCell.GetDownCell();
             }
 
-            Debug.Log(GetRowCol()[0] + ", " + GetRowCol()[1] + " " + downCell.IsFilled() + ", " + downCell.gameObject.name);
+            //Debug.Log(GetRowCol()[0] + ", " + GetRowCol()[1] + " " + downCell.IsFilled() + ", " + downCell.gameObject.name);
 
             if (downCell.IsFilled() == false)
             {
