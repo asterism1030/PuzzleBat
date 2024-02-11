@@ -56,32 +56,43 @@ public class Block : MonoBehaviour
 
     public IEnumerator Fall()
     {
-        // 置馬, 置疎馬, 置酔馬
-        RCCell downCell = GetRCCell().GetDownCell();
-
-        if (downCell == null)
+        for(; ; )
         {
-            yield break;
-        }
+            // 置馬
+            RCCell downCell = GetRCCell().GetDownCell();
 
-        if(downCell.IsFilled() == true)
-        {
-            yield return null;
-        }
-
-        while (downCell != null)
-        {
-            if ((downCell.GetDownCell() == null) || (downCell.GetDownCell().IsFilled() == true))
+            if (downCell == null)
             {
-                break;
+                Debug.Log(GetRowCol()[0] + ", " + GetRowCol()[1] + " downcell null");
+                yield break;
             }
 
-            downCell = downCell.GetDownCell();
+            while (downCell != null)
+            {
+                if (downCell.GetDownCell() == null)
+                {
+                    yield break;
+                }
+
+                if (downCell.GetDownCell().IsFilled() == true)
+                {
+                    break;
+                }
+
+                downCell = downCell.GetDownCell();
+            }
+
+            Debug.Log(GetRowCol()[0] + ", " + GetRowCol()[1] + " " + downCell.IsFilled() + ", " + downCell.gameObject.name);
+
+            if (downCell.IsFilled() == false)
+            {
+                Move(downCell);
+            }
+
+            yield return new WaitForSeconds(0.1f);
         }
+        
 
-        Move(downCell);
-
-        yield return null;
     }
 
     public void Move(RCCell rcCell)

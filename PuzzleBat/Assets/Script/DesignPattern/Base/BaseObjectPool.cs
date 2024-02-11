@@ -1,6 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -28,7 +26,7 @@ public class BaseObjectPool : MonoBehaviour
     {
         int rand = Random.Range(0, goPref.Count);
 
-        var obj = Instantiate(goPref[rand], goPref[rand].transform.parent);
+        var obj = Instantiate(goPref[rand], transform);
         obj.SetActive(false);
 
         return obj;
@@ -37,6 +35,7 @@ public class BaseObjectPool : MonoBehaviour
     protected virtual void OnReturnedToPool(GameObject go)
     {
         go.SetActive(false);
+        go.transform.SetParent(transform);
     }
 
     protected virtual void OnTakeFromPool(GameObject go)
@@ -49,5 +48,11 @@ public class BaseObjectPool : MonoBehaviour
         Destroy(go);
     }
 
-
+    /*
+     * 
+     * TODO) 리스트의 GO 를 각각 N 개 만큼 생성 후
+     * take 시 랜덤하게 줌
+     * 
+     * 
+     */
 }

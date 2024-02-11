@@ -120,7 +120,7 @@ public class Board : MonoBehaviour
 
                 Clear(matched);
                 // TODO) test
-                Drop(true);
+                //Drop(true);
             }
 
             foreach (Block sb in selectedBlocks)
@@ -144,7 +144,7 @@ public class Board : MonoBehaviour
 
         for(int i = upRange; i < downRange; i++)
         {
-            if (cell.GetRCCell(i, col) == null)
+            if (cell.GetRCCell(i, col) == null || cell.GetRCCell(i, col).GetBlock() == null)
             {
                 break;
             }
@@ -179,7 +179,7 @@ public class Board : MonoBehaviour
 
         for (int i = upRange; i < downRange; i++)
         {
-            if(cell.GetRCCell(row, i) == null)
+            if(cell.GetRCCell(row, i) == null || cell.GetRCCell(row, i).GetBlock() == null)
             {
                 break;
             }

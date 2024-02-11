@@ -33,13 +33,15 @@ public class RCCell : MonoBehaviour
 
     public Block GetBlock()
     {
-        Transform child = transform.GetChild(0);
+        int childCnt = transform.childCount;
 
-        return (child == null) ? null : child.GetComponent<Block>();
+        return (childCnt == 0) ? null : transform.GetChild(0).GetComponent<Block>();
     }
 
     public bool IsFilled()
     {
-        return (GetBlock() == null) ? false : true;
+        int childCnt = transform.childCount;
+
+        return (childCnt == 0) ? false : true;
     }
 }
