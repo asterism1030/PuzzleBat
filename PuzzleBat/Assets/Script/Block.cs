@@ -12,9 +12,13 @@ public class Block : MonoBehaviour
     private SpriteRenderer visual;
 
     private bool isSelected = false;
+    private int row = -1;
+    private int col = -1;
 
     // getter setter
     public bool IsSelected { get { return isSelected; } set { isSelected = value; } }
+    public int Row { get { return row; } set {  row = value; } }
+    public int Col { get { return col; } set { col = value; } }
 
     // Action / Func
     //public Action<bool> BoardDelegate;
@@ -24,7 +28,8 @@ public class Block : MonoBehaviour
         visual.color = Color.white;
         IsSelected = false;
 
-        //BoardDelegate += Drop;
+        row = -1;
+        col = -1;
     }
 
     public void ToggleBlockSelect()
@@ -42,9 +47,9 @@ public class Block : MonoBehaviour
 
 
     // TODO) 명명 변경
-    public void Drop(bool isAnyCellEmpty)
+    public void Drop(bool isAnyCellEmpty, List<int> emptyCol)
     {
-        if(isAnyCellEmpty == true)
+        if(isAnyCellEmpty == true && gameObject.activeSelf == true && emptyCol.Contains(col))
         {
             StartCoroutine(Fall());
         }
@@ -71,7 +76,7 @@ public class Block : MonoBehaviour
             {
                 if (downCell.GetDownCell() == null)
                 {
-                    yield break;
+                    break;
                 }
 
                 if (downCell.GetDownCell().IsFilled() == true)
@@ -99,27 +104,18 @@ public class Block : MonoBehaviour
     {
         transform.SetParent(rcCell.gameObject.transform);
         transform.DOMove(rcCell.gameObject.transform.position, 0.5f);
+        
+        row = rcCell.Row;
+        col = rcCell.Col;
     }
 
     public void Put(RCCell rc)
     {
         this.transform.SetParent(rc.transform);
         this.transform.position = rc.transform.position;
-    }
 
-    public List<int> GetRowCol()
-    {
-        List<int> rc = new List<int> { -1, -1 };
-
-        if (transform.parent == null || transform.parent.GetComponent<RCCell>() == null)
-        {
-            return rc;
-        }
-
-        rc[0] = transform.parent.GetComponent<RCCell>().Row;
-        rc[1] = transform.parent.GetComponent<RCCell>().Col;
-
-        return rc;
+        row = rc.Row;
+        col = rc.Col;
     }
 
     public string GetBlockType()

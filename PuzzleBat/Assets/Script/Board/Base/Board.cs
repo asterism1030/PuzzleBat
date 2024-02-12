@@ -74,20 +74,15 @@ public class Board : MonoBehaviour
                 Block block = blockPool.Get();
 
                 block.Put(rc);
-                BlockDelegate += block.Drop;
             }
         }
     }
 
-    // TODO) Test
-    public virtual void Drop(bool isAnyCellEmpty)
-    {
-        BlockDelegate(isAnyCellEmpty);
-    }
 
     public virtual void Refill()
     {
         // TODO) 더이상의 Refill 이 필요 없을 경우 Block 들에게 알림
+        
     }
 
     public virtual void Select(Block block)
@@ -103,11 +98,14 @@ public class Board : MonoBehaviour
         selectedBlocks.Add(block);
         block.ToggleBlockSelect();
 
+        // TODO) test
+        //Debug.Log(block.GetRCCell().GetDownCell().Row + ", " + block.GetRCCell().GetDownCell().Col);
+
         if (selectedBlocks.Count == 2)
         {
             // Swap (같은 Row 이거나 Col)
-            List<int> block1RC = selectedBlocks[0].GetRowCol();
-            List<int> block2RC = selectedBlocks[1].GetRowCol();
+            List<int> block1RC = new List<int>{ selectedBlocks[0].Row, selectedBlocks[0].Col };
+            List<int> block2RC = new List<int> { selectedBlocks[1].Row, selectedBlocks[1].Col };
 
             if (Mathf.Abs(block1RC[0] - block2RC[0]) + Mathf.Abs(block1RC[1] - block2RC[1]) == 1)
             {
@@ -117,10 +115,15 @@ public class Board : MonoBehaviour
                 matched.AddRange(Match(block2RC[0], block2RC[1]));
 
                 // TODO) matched sorting (클릭한 블록 중심으로)
-
-                Clear(matched);
-                // TODO) test
-                Drop(true);
+                if(matched.Count != 0)
+                {
+                    Clear(matched);
+                }
+                else
+                {
+                    // TODO) 0.3f 딜레이 후 스왑
+                    Swap(selectedBlocks[0], selectedBlocks[1]);
+                }
             }
 
             foreach (Block sb in selectedBlocks)

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,6 +10,8 @@ public class BlockPool : BaseObjectPool
     // getter setter
     public bool IsReleasing { get { return isReleasing; } }
 
+    // Action / Func
+    public Action<bool, List<int>> BlockPoolDelegate;
 
     public void Start()
     {
@@ -31,6 +34,7 @@ public class BlockPool : BaseObjectPool
     {
         Block block = Pool.Get().GetComponent<Block>();
         block.Init();
+        BlockPoolDelegate += block.Drop;
 
         return block;
     }
@@ -49,19 +53,27 @@ public class BlockPool : BaseObjectPool
     #endregion
 
     #region Etc Function
+    // TODO) ∏Æ∆—≈‰∏µ
     private IEnumerator RemoveBlock(List<Block> blocks)
     {
+        List<int> emptyCol = new List<int>();
+
         foreach (Block block in blocks)
         {
             block.RemoveAnimEffect();
+            emptyCol.Add(block.Col);
+
             yield return new WaitForSeconds(0.3f);
 
+            block.Init();
             Pool.Release(block.gameObject);
         }
 
         isReleasing = false;
 
-        yield break;
+        BlockPoolDelegate(true, emptyCol);
+
+
     }
     #endregion
 }
