@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,6 +15,8 @@ public class RCCell : MonoBehaviour
     public int Col { get { return col; } set { col = value; } }
     public bool IsRefillPoint { get { return isRefillPoint; } set { isRefillPoint = value; } }
 
+    // Action / Func
+    public Action<RCCell> RCCellDelegate;
 
     public RCCell GetUpCell()
     {
@@ -53,7 +56,7 @@ public class RCCell : MonoBehaviour
     {
         if(isRefillPoint == true && IsFilled() == false)
         {
-            // TODO) ¿€º∫
+            RCCellDelegate(this);
         }
     }
 }

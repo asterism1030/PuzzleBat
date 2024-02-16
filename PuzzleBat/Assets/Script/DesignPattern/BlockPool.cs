@@ -5,10 +5,10 @@ using UnityEngine;
 
 public class BlockPool : BaseObjectPool
 {
-    private bool isReleasing = true;
+    //private bool isReleasing = true;
 
     // getter setter
-    public bool IsReleasing { get { return isReleasing; } }
+    //public bool IsReleasing { get { return isReleasing; } }
 
     // Action / Func
     public Action<bool, List<int>> BlockPoolDelegate;
@@ -41,7 +41,7 @@ public class BlockPool : BaseObjectPool
 
     public void Release(List<Block> blocks)
     {
-        isReleasing = true;
+        //isReleasing = true;
         StartCoroutine(RemoveBlock(blocks));
     }
 
@@ -69,11 +69,8 @@ public class BlockPool : BaseObjectPool
             Pool.Release(block.gameObject);
         }
 
-        isReleasing = false;
-
+        yield return null;
         BlockPoolDelegate(true, emptyCol);
-
-
     }
     #endregion
 }

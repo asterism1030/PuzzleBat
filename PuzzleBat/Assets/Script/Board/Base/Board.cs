@@ -46,8 +46,10 @@ public class Board : MonoBehaviour
 
             // TODO) Select 내부 함수 분리
             Select(block);
-            
         }
+
+        // TODO) 리팩토링 예정
+        Refill();
     }
     #endregion
 
@@ -81,8 +83,15 @@ public class Board : MonoBehaviour
 
     public virtual void Refill()
     {
-        // TODO) 더이상의 Refill 이 필요 없을 경우 Block 들에게 알림
-        
+        // TODO) Event 로 변경, 더이상의 Refill 이 필요 없을 경우 Block 들에게 알림
+
+        List<RCCell> rcCells = cell.GetEmptyRefillPointRCCell();
+
+        foreach(RCCell rc in rcCells)
+        {
+            Block block = blockPool.Get();
+            block.Put(rc);
+        }
     }
 
     public virtual void Select(Block block)
