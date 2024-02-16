@@ -59,6 +59,11 @@ public class Block : MonoBehaviour
         }
     }
 
+    public void Drop()
+    {
+        StartCoroutine(Fall());
+    }
+
     public IEnumerator Fall()
     {
         for(; ; )

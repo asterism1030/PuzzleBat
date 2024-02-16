@@ -91,6 +91,7 @@ public class Board : MonoBehaviour
         {
             Block block = blockPool.Get();
             block.Put(rc);
+            block.Drop();
         }
     }
 
