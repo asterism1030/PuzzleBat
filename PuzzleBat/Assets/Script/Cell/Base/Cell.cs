@@ -5,6 +5,9 @@ using UnityEngine;
 public class Cell : MonoBehaviour
 {
     [SerializeField]
+    private List<GameObject> refillPointCell;
+
+    [SerializeField]
     private N_Array[] rcCells;
 
     void Start()
@@ -31,6 +34,18 @@ public class Cell : MonoBehaviour
                 rc.Row = i;
                 rc.Col = j;
             }
+        }
+
+        foreach(GameObject go in refillPointCell)
+        {
+            RCCell rc = go.GetComponent<RCCell>();
+
+            if(rc == null)
+            {
+                continue;
+            }
+
+            rc.IsRefillPoint = true;
         }
     }
 
@@ -82,5 +97,4 @@ public class Cell : MonoBehaviour
         return cnt;
     }
 
-    
 }

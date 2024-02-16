@@ -7,9 +7,13 @@ public class RCCell : MonoBehaviour
     private int row = -1;
     private int col = -1;
 
+    private bool isRefillPoint = false;
+
     // getter setter
     public int Row { get { return row; } set { row = value; } }
     public int Col { get { return col; } set { col = value; } }
+    public bool IsRefillPoint { get { return isRefillPoint; } set { isRefillPoint = value; } }
+
 
     public RCCell GetUpCell()
     {
@@ -43,5 +47,13 @@ public class RCCell : MonoBehaviour
         int childCnt = transform.childCount;
 
         return (childCnt == 0) ? false : true;
+    }
+
+    public void RequestRefill()
+    {
+        if(isRefillPoint == true && IsFilled() == false)
+        {
+            // TODO) ¿€º∫
+        }
     }
 }
