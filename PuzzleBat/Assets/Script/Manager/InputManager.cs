@@ -3,9 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// TODO) 팩토리 등으로 스크립트를 통해 자동으로 GO 만들고 코드 붙이기
-// 이벤트 핸들러 작성
-public class InputManager : MonoBehaviour
+
+public class InputManager : Singleton<InputManager>
 {
     public Action KeyAction = null;
 
@@ -32,5 +31,15 @@ public class InputManager : MonoBehaviour
                 //KeyAction?.Invoke(this, EventArgs.Empty);
             }
         }
+    }
+
+    public void Exit()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+
+        Application.Quit();
+#endif
     }
 }

@@ -16,29 +16,14 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
                 if(_instance == null)
                 {
                     GameObject obj = new GameObject();
-                    _instance = obj.AddComponent(typeof(T)) as T;
                     obj.name = typeof(T).ToString();
+                    _instance = obj.AddComponent(typeof(T)) as T;
 
-                    DontDestroyOnLoad(obj);
                 }
+
+                DontDestroyOnLoad(_instance.gameObject);
             }
             return _instance;
-        }
-    }
-    
-    void Awake()
-    {
-        if (_instance == null)
-        {
-            GameObject obj = new GameObject();
-            _instance = obj.AddComponent(typeof(T)) as T;
-            obj.name = typeof(T).ToString();
-
-            DontDestroyOnLoad(obj);
-        }
-        else if(_instance != this)
-        {
-            Destroy(this.gameObject);
         }
     }
 }
