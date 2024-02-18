@@ -25,7 +25,6 @@ public class Board : MonoBehaviour
     private int totalBlockCnt = 0;
 
     private List<Block> selectedBlocks = new List<Block>(2);
-    private List<Block> matchedBlocks = new List<Block>();
 
     #region MonoBehaviour
     public void Start()
@@ -83,9 +82,37 @@ public class Board : MonoBehaviour
         }
 
         Select(block);
+
+        if(selectedBlocks.Count != 2)
+        {
+            return;
+        }
+
+        Swap(selectedBlocks[0], selectedBlocks[1]);
+
+        if (CanSwap(selectedBlocks[0], selectedBlocks[1]) == false)
+        {
+            Swap(selectedBlocks[0], selectedBlocks[1]);
+            return;
+        }
+
+        List<Block> matched = Match(selectedBlocks[0].Row, selectedBlocks[0].Col);
+        matched.AddRange(Match(selectedBlocks[1].Row, selectedBlocks[1].Col));
+
+        if (matched.Count != 0)
+        {
+            Release(matched);
+        }
+
+        foreach (Block sb in selectedBlocks)
+        {
+            sb.ToggleBlockSelect();
+        }
+
+        selectedBlocks.Clear();
     }
 
-    public virtual void Refill()
+    public void Refill()
     {
         // TODO) Event 로 변경, 더이상의 Refill 이 필요 없을 경우 Block 들에게 알림
 
@@ -99,7 +126,7 @@ public class Board : MonoBehaviour
         }
     }
 
-    public virtual void Select(Block block)
+    public void Select(Block block)
     {
         if (block.IsSelected == true || selectedBlocks.Contains(block))
         {
@@ -109,41 +136,9 @@ public class Board : MonoBehaviour
 
         selectedBlocks.Add(block);
         block.ToggleBlockSelect();
-
-        if (selectedBlocks.Count == 2)
-        {
-            // Swap (같은 Row 이거나 Col)
-            List<int> block1RC = new List<int>{ selectedBlocks[0].Row, selectedBlocks[0].Col };
-            List<int> block2RC = new List<int> { selectedBlocks[1].Row, selectedBlocks[1].Col };
-
-            if (Mathf.Abs(block1RC[0] - block2RC[0]) + Mathf.Abs(block1RC[1] - block2RC[1]) == 1)
-            {
-                Swap(selectedBlocks[0], selectedBlocks[1]);
-
-                List<Block> matched = Match(block1RC[0], block1RC[1]);
-                matched.AddRange(Match(block2RC[0], block2RC[1]));
-
-                if(matched.Count != 0)
-                {
-                    ReleaseMatch(matched);
-                }
-                else
-                {
-                    Swap(selectedBlocks[0], selectedBlocks[1]);
-                }
-            }
-
-            foreach (Block sb in selectedBlocks)
-            {
-                sb.ToggleBlockSelect();
-            }
-
-            selectedBlocks.Clear();
-        }
-
     }
 
-    public virtual List<Block> Match(int row, int col)
+    public List<Block> Match(int row, int col)
     {
         List<Block> result = new List<Block>();
 
@@ -221,17 +216,38 @@ public class Board : MonoBehaviour
         return result;
     }
 
-    public virtual void ReleaseMatch(List<Block> blocks)
+    public virtual void Release(List<Block> blocks)
     {
         blockPool.Release(blocks);
     }
 
-    public virtual void Shuffle()
+    public void Shuffle()
     {
 
     }
 
-    public virtual void Swap(Block block1, Block block2)
+    public bool CanSwap(Block block1, Block block2)
+    {
+        bool result = false;
+
+        if(block1 == null || block2 == null)
+        {
+            return result;
+        }
+
+        // Swap (인접한 두 블럭인지, 같은 Row 이거나 Col)
+        List<int> block1RC = new List<int> { block1.Row, block1.Col };
+        List<int> block2RC = new List<int> { block2.Row, block2.Col };
+
+        if (Mathf.Abs(block1RC[0] - block2RC[0]) + Mathf.Abs(block1RC[1] - block2RC[1]) == 1)
+        {
+            result = true;
+        }
+
+        return result;
+    }
+
+    public void Swap(Block block1, Block block2)
     {
         RCCell block1RCCell = block1.GetRCCell();
 
