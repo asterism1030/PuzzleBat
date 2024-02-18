@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -18,7 +19,7 @@ public class Board : MonoBehaviour
     private BlockPool blockPool;
 
     // Action / Func
-    public Action<bool> BlockDelegate;
+    public Action<bool, List<int>> EventBlockDrop;
 
     // 기타 변수
     private int totalCellCnt = 0;
@@ -34,16 +35,29 @@ public class Board : MonoBehaviour
 
     void Update()
     {
-        // TODO) 리팩토링 예정
-        Refill();
+        // TODO) 리팩토링 예정 목표) Update 제거
+        if(totalCellCnt == totalBlockCnt)
+        {
+            return;
+        }
+
+        List<RCCell> rcCells = cell.GetEmptyRefillPointRCCell();
+
+        foreach (RCCell rc in rcCells)
+        {
+            Refill(rc).Drop();
+        }
     }
     #endregion
 
     #region EtcFunc
     public virtual void Init()
     {
-        // Input Event subscribe
-        InputManager.Instance.MouseBtnUp += OnMouseBtnUP;
+        //// Subscribe
+        // Input Event
+        InputManager.Instance.EventMouseBtnUp += OnMouseBtnUP;
+        // BlockPool Event
+        blockPool.ActionReleaseEnd += Drop;
 
         // Board set
         totalCellCnt = cell.Count();
@@ -57,16 +71,13 @@ public class Board : MonoBehaviour
             for (int j = 0; j < colCnt; j++)
             {
                 RCCell rc = cell.GetRCCell(i, j);
-
+                
                 if (rc == null)
                 {
                     continue;
                 }
 
-                Block block = blockPool.Get();
-
-                block.Put(rc);
-                totalBlockCnt++;
+                Refill(rc);
             }
         }
     }
@@ -103,27 +114,29 @@ public class Board : MonoBehaviour
         {
             Release(matched);
         }
+        else
+        {
+            Swap(selectedBlocks[0], selectedBlocks[1]);
+        }
 
         foreach (Block sb in selectedBlocks)
         {
             sb.ToggleBlockSelect();
         }
-
         selectedBlocks.Clear();
+
+
     }
 
-    public void Refill()
+    public Block Refill(RCCell rcCell)
     {
-        // TODO) Event 로 변경, 더이상의 Refill 이 필요 없을 경우 Block 들에게 알림
+        Block block = blockPool.Get();
+        block.Put(rcCell);
+        EventBlockDrop += block.Drop;
 
-        List<RCCell> rcCells = cell.GetEmptyRefillPointRCCell();
+        totalBlockCnt++;
 
-        foreach(RCCell rc in rcCells)
-        {
-            Block block = blockPool.Get();
-            block.Put(rc);
-            block.Drop();
-        }
+        return block;
     }
 
     public void Select(Block block)
@@ -141,7 +154,6 @@ public class Board : MonoBehaviour
     public List<Block> Match(int row, int col)
     {
         List<Block> result = new List<Block>();
-
         List<Block> matched = new List<Block>();
 
         // 상 -> 하
@@ -219,6 +231,7 @@ public class Board : MonoBehaviour
     public virtual void Release(List<Block> blocks)
     {
         blockPool.Release(blocks);
+        totalBlockCnt -= blocks.Count;
     }
 
     public void Shuffle()
@@ -229,11 +242,6 @@ public class Board : MonoBehaviour
     public bool CanSwap(Block block1, Block block2)
     {
         bool result = false;
-
-        if(block1 == null || block2 == null)
-        {
-            return result;
-        }
 
         // Swap (인접한 두 블럭인지, 같은 Row 이거나 Col)
         List<int> block1RC = new List<int> { block1.Row, block1.Col };
@@ -253,6 +261,12 @@ public class Board : MonoBehaviour
 
         block1.Move(block2.GetRCCell());
         block2.Move(block1RCCell);
+    }
+
+    public void Drop(List<int> emptyCol)
+    {
+        bool isDrop = (totalCellCnt == totalBlockCnt) ? false : true;
+        EventBlockDrop?.Invoke(isDrop, emptyCol);
     }
 
     #endregion

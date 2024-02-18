@@ -21,7 +21,7 @@ public class Block : MonoBehaviour
     public int Col { get { return col; } set { col = value; } }
 
     // Action / Func
-    //public Action<bool> BoardDelegate;
+    //public Action<bool> BlockAction;
 
     public void Init()
     {
@@ -45,15 +45,13 @@ public class Block : MonoBehaviour
         visual.color = Color.red;
     }
 
-
-    // TODO) 명명 변경
-    public void Drop(bool isAnyCellEmpty, List<int> emptyCol)
+    public void Drop(bool isDrop, List<int> emptyCol)
     {
-        if(isAnyCellEmpty == true && gameObject.activeSelf == true && emptyCol.Contains(col))
+        if (isDrop == true && gameObject.activeSelf == true && emptyCol.Contains(col))
         {
             StartCoroutine(Fall());
         }
-        else
+        else if (isDrop == false)
         {
             StopCoroutine(Fall());
         }
@@ -68,12 +66,11 @@ public class Block : MonoBehaviour
     {
         for(; ; )
         {
-            // 최하
+            // 최하단
             RCCell downCell = GetRCCell().GetDownCell();
 
             if (downCell == null)
             {
-                //Debug.Log(GetRowCol()[0] + ", " + GetRowCol()[1] + " downcell null");
                 yield break;
             }
 

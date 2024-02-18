@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class InputManager : Singleton<InputManager>
 {
-    public Action<RaycastHit2D> MouseBtnUp;
+    public Action<RaycastHit2D> EventMouseBtnUp;
 
     void Update()
     {
@@ -23,7 +23,7 @@ public class InputManager : Singleton<InputManager>
 
             if (hit.collider != null)
             {
-                MouseBtnUp?.Invoke(hit);
+                EventMouseBtnUp?.Invoke(hit);
             }
         }
     }

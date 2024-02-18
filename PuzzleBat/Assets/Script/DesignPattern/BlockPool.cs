@@ -11,7 +11,7 @@ public class BlockPool : BaseObjectPool
     //public bool IsReleasing { get { return isReleasing; } }
 
     // Action / Func
-    public Action<bool, List<int>> BlockPoolDelegate;
+    public Action<List<int>> ActionReleaseEnd; // Release 완료한 블록 열 리스트
 
     public void Start()
     {
@@ -34,14 +34,12 @@ public class BlockPool : BaseObjectPool
     {
         Block block = Pool.Get().GetComponent<Block>();
         block.Init();
-        BlockPoolDelegate += block.Drop;
 
         return block;
     }
 
     public void Release(List<Block> blocks)
     {
-        //isReleasing = true;
         StartCoroutine(RemoveBlock(blocks));
     }
 
@@ -53,9 +51,9 @@ public class BlockPool : BaseObjectPool
     #endregion
 
     #region Etc Function
-    // TODO) 리팩토링
     private IEnumerator RemoveBlock(List<Block> blocks)
     {
+        //isReleasing = true;
         List<int> emptyCol = new List<int>();
 
         foreach (Block block in blocks)
@@ -69,8 +67,7 @@ public class BlockPool : BaseObjectPool
             Pool.Release(block.gameObject);
         }
 
-        yield return null;
-        BlockPoolDelegate(true, emptyCol);
+        ActionReleaseEnd?.Invoke(emptyCol);
     }
     #endregion
 }
