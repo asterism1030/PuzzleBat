@@ -7,12 +7,6 @@ using UnityEngine;
 
 public class BoardManager : Singleton<BoardManager>
 {
-    [SerializeField]
-    private GameObject curMap_Score;
-
-    [SerializeField]
-    private GameObject curMap_MoveCnt;
-
     // 현재 맵의 정보
     private int curMap_moveCnt = 10;
     private int curMap_score = 0;

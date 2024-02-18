@@ -7,6 +7,7 @@ public class ManagerFactory : Singleton<ManagerFactory>
     private GameManager gameManager;
     private BoardManager boardManager;
     private InputManager inputManager;
+    private SoundManager soundManager;
 
     void Awake()
     {
@@ -18,5 +19,6 @@ public class ManagerFactory : Singleton<ManagerFactory>
         boardManager =  BoardManager.Instance;
         gameManager = GameManager.Instance;
         inputManager = InputManager.Instance;
+        soundManager = SoundManager.Instance;
     }
 }
