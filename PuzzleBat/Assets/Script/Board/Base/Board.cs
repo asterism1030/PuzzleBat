@@ -22,7 +22,10 @@ public class Board : MonoBehaviour
 
     // 기타 변수
     private int totalCellCnt = 0;
+    private int totalBlockCnt = 0;
+
     private List<Block> selectedBlocks = new List<Block>(2);
+    private List<Block> matchedBlocks = new List<Block>();
 
     #region MonoBehaviour
     public void Start()
@@ -32,22 +35,6 @@ public class Board : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButtonUp(0))
-        {
-            Vector2 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            RaycastHit2D hit = Physics2D.Raycast(pos, Vector2.zero, 0f);
-
-            if (hit.collider == null)
-            {
-                return;
-            }
-
-            Block block = hit.transform.GetComponent<Block>();
-
-            // TODO) Select 내부 함수 분리
-            Select(block);
-        }
-
         // TODO) 리팩토링 예정
         Refill();
     }
@@ -56,6 +43,10 @@ public class Board : MonoBehaviour
     #region EtcFunc
     public virtual void Init()
     {
+        // Input Event subscribe
+        InputManager.Instance.MouseBtnUp += OnMouseBtnUP;
+
+        // Board set
         totalCellCnt = cell.Count();
         blockPool.Clear();
 
@@ -76,10 +67,23 @@ public class Board : MonoBehaviour
                 Block block = blockPool.Get();
 
                 block.Put(rc);
+                totalBlockCnt++;
             }
         }
     }
 
+
+    public virtual void OnMouseBtnUP(RaycastHit2D hit)
+    {
+        Block block = hit.transform.GetComponent<Block>();
+
+        if(block == null)
+        {
+            return;
+        }
+
+        Select(block);
+    }
 
     public virtual void Refill()
     {
@@ -101,15 +105,10 @@ public class Board : MonoBehaviour
         {
             block.ToggleBlockSelect();
             selectedBlocks.Remove(block);
-
-            return;
         }
 
         selectedBlocks.Add(block);
         block.ToggleBlockSelect();
-
-        // TODO) test
-        //Debug.Log(block.GetRCCell().GetDownCell().Row + ", " + block.GetRCCell().GetDownCell().Col);
 
         if (selectedBlocks.Count == 2)
         {
@@ -124,14 +123,12 @@ public class Board : MonoBehaviour
                 List<Block> matched = Match(block1RC[0], block1RC[1]);
                 matched.AddRange(Match(block2RC[0], block2RC[1]));
 
-                // TODO) matched sorting (클릭한 블록 중심으로)
                 if(matched.Count != 0)
                 {
-                    Clear(matched);
+                    ReleaseMatch(matched);
                 }
                 else
                 {
-                    // TODO) 0.3f 딜레이 후 스왑
                     Swap(selectedBlocks[0], selectedBlocks[1]);
                 }
             }
@@ -143,6 +140,7 @@ public class Board : MonoBehaviour
 
             selectedBlocks.Clear();
         }
+
     }
 
     public virtual List<Block> Match(int row, int col)
@@ -223,14 +221,9 @@ public class Board : MonoBehaviour
         return result;
     }
 
-    public virtual void Clear(List<Block> blocks)
+    public virtual void ReleaseMatch(List<Block> blocks)
     {
         blockPool.Release(blocks);
-    }
-
-    public virtual void Clear()
-    {
-
     }
 
     public virtual void Shuffle()
