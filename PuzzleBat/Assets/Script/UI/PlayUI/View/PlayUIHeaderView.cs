@@ -1,21 +1,27 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class PlayUIHeaderView : MonoBehaviour
 {
     [SerializeField]
-    private GameObject move;
+    private TextMeshProUGUI move;
 
     [SerializeField]
-    private GameObject score;
+    private TextMeshProUGUI score;
 
     [SerializeField]
     private GameObject pauseBtn;
 
-
-    public void UpdateView()
+    private void Start()
     {
-        
+        BoardManager.Instance.EventHeaderInfoChanged += UpdateView;
+    }
+
+    public void UpdateView(PlayUIHeaderModel playUIHeaderModel)
+    {
+        move.text = playUIHeaderModel.Move.ToString();
+        score.text = playUIHeaderModel.Score.ToString();
     }
 }

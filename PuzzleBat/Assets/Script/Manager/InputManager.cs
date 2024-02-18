@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class InputManager : Singleton<InputManager>
 {
+    // Action / Func
     public Action<RaycastHit2D> EventMouseBtnUp;
 
     void Update()

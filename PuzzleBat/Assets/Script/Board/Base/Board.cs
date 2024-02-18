@@ -38,6 +38,7 @@ public class Board : MonoBehaviour
         // TODO) 리팩토링 예정 목표) Update 제거
         if(totalCellCnt == totalBlockCnt)
         {
+            Drop(null);
             return;
         }
 
@@ -57,7 +58,7 @@ public class Board : MonoBehaviour
         // Input Event
         InputManager.Instance.EventMouseBtnUp += OnMouseBtnUP;
         // BlockPool Event
-        blockPool.ActionReleaseEnd += Drop;
+        blockPool.EventReleaseEnd += Drop;
 
         // Board set
         totalCellCnt = cell.Count();
@@ -82,9 +83,9 @@ public class Board : MonoBehaviour
         }
     }
 
-
     public virtual void OnMouseBtnUP(RaycastHit2D hit)
     {
+        // TODO) 리팩토링 예정
         Block block = hit.transform.GetComponent<Block>();
 
         if(block == null)
@@ -98,6 +99,9 @@ public class Board : MonoBehaviour
         {
             return;
         }
+
+        PlayUIHeaderModel playUIHeaderModel = BoardManager.Instance.GetUIInfo();
+        playUIHeaderModel.Move -= 1;
 
         Swap(selectedBlocks[0], selectedBlocks[1]);
 
@@ -113,6 +117,9 @@ public class Board : MonoBehaviour
         if (matched.Count != 0)
         {
             Release(matched);
+
+            // TODO) 변경
+            playUIHeaderModel.Score += 3;
         }
         else
         {
@@ -125,7 +132,7 @@ public class Board : MonoBehaviour
         }
         selectedBlocks.Clear();
 
-
+        BoardManager.Instance.UpdateUIInfo(playUIHeaderModel);
     }
 
     public Block Refill(RCCell rcCell)

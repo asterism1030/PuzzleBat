@@ -3273,9 +3273,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91923fdee4e4f9d4eb96fb52e86e3a94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  move: {fileID: 2070475440}
-  score: {fileID: 301888792}
-  pauseBtn: {fileID: 954392992}
+  move: {fileID: 2070475442}
+  score: {fileID: 301888794}
+  pauseBtn: {fileID: 1416993642}
 --- !u!1 &905968946
 GameObject:
   m_ObjectHideFlags: 0
@@ -3425,11 +3425,6 @@ Transform:
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 1086597718241938827, guid: cf0d45a35c79a414b8694f092791aa9a, type: 3}
   m_PrefabInstance: {fileID: 1086597718071446505}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &954392992 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7983343827379668320, guid: 27fe163c5e813a443b0b7bf2d6485c82, type: 3}
-  m_PrefabInstance: {fileID: 7983343827440964312}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &986314013
 GameObject:

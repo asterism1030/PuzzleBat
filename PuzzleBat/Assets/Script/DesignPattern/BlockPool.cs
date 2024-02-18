@@ -11,7 +11,7 @@ public class BlockPool : BaseObjectPool
     //public bool IsReleasing { get { return isReleasing; } }
 
     // Action / Func
-    public Action<List<int>> ActionReleaseEnd; // Release 완료한 블록 열 리스트
+    public Action<List<int>> EventReleaseEnd; // Release 완료한 블록 열 리스트
 
     public void Start()
     {
@@ -67,7 +67,7 @@ public class BlockPool : BaseObjectPool
             Pool.Release(block.gameObject);
         }
 
-        ActionReleaseEnd?.Invoke(emptyCol);
+        EventReleaseEnd?.Invoke(emptyCol);
     }
     #endregion
 }

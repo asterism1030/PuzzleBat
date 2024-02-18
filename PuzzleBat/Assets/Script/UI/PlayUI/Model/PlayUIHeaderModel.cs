@@ -12,4 +12,9 @@ public class PlayUIHeaderModel
     public int Move { get { return move; } set { move = value; } }
     public int Score { get { return score; } set { score = value; } }
 
+    public PlayUIHeaderModel(int move, int score)
+    {
+        this.move = move;
+        this.score = score;
+    }
 }
