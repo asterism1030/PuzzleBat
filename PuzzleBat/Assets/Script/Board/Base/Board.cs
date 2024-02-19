@@ -113,6 +113,11 @@ public class Board : MonoBehaviour
         if (CanSwap(selectedBlocks[0], selectedBlocks[1]) == false)
         {
             Swap(selectedBlocks[0], selectedBlocks[1]);
+            foreach (Block sb in selectedBlocks)
+            {
+                sb.ToggleBlockSelect();
+            }
+            selectedBlocks.Clear();
             return;
         }
 
