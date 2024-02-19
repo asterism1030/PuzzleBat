@@ -18,10 +18,6 @@ public class Board : MonoBehaviour
     [SerializeField]
     private BlockPool blockPool;
 
-    // sound
-    // TODO) ºÐ¸®
-    public Sound sound;
-
     // Action / Func
     public Action<bool, List<int>> EventBlockDrop;
 
@@ -35,6 +31,7 @@ public class Board : MonoBehaviour
     public void Start()
     {
         Init();
+        SoundManager.Instance.Play(ESoundType.BGM);
     }
 
     void Update()
@@ -98,7 +95,7 @@ public class Board : MonoBehaviour
         }
 
         Select(block);
-        sound.ButtonClicked();
+        SoundManager.Instance.Play(ESoundType.BtnClicked);
 
         if(selectedBlocks.Count != 2)
         {

@@ -11,9 +11,6 @@ public class Block : MonoBehaviour
     [SerializeField]
     private SpriteRenderer visual;
 
-    [SerializeField]
-    private AudioSource blockReleased;
-
     private bool isSelected = false;
     private int row = -1;
     private int col = -1;
@@ -46,7 +43,7 @@ public class Block : MonoBehaviour
     public void RemoveAnimEffect()
     {
         visual.color = Color.red;
-        blockReleased.Play();
+        SoundManager.Instance.Play(ESoundType.BlockRelease);
     }
 
     public void Drop(bool isDrop, List<int> emptyCol)
