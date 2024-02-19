@@ -82,4 +82,22 @@ public class SoundManager : Singleton<SoundManager>
                 break;
         }
     }
+
+    public void Stop(ESoundType soundType)
+    {
+        string[] soundNames = System.Enum.GetNames(typeof(ESoundType));
+
+        switch ((int)soundType)
+        {
+            case (int)ESoundType.BGM:
+                {
+                    AudioSource audio = audioSources[(int)ESoundType.BGM];
+                    audio.clip = audioClips[soundNames[(int)ESoundType.BGM]];
+                    audio.Stop();
+                }
+                break;
+            default:
+                break;
+        }
+    }
 }
