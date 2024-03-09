@@ -12,8 +12,15 @@ public enum ESoundType
 
 public class SoundManager : Singleton<SoundManager>
 {
+    private bool bgmON = true;
+    private bool effectON = true;
+
     private AudioSource[] audioSources = new AudioSource[(int)ESoundType.MaxCnt];
     private Dictionary<string, AudioClip> audioClips = new Dictionary<string, AudioClip>();
+
+    // getter setter
+    public bool BGM_ON { get { return bgmON; } set { bgmON = value; } }
+    public bool Effect_ON { get { return effectON; } set { effectON = value; } }
 
     void Awake()
     {
@@ -59,6 +66,11 @@ public class SoundManager : Singleton<SoundManager>
         {
             case (int)ESoundType.BGM:
                 {
+                    if (bgmON == false)
+                    {
+                        break;
+                    }
+
                     AudioSource audio = audioSources[(int)ESoundType.BGM];
                     audio.clip = audioClips[soundNames[(int)ESoundType.BGM]];
                     audio.Play();
@@ -66,6 +78,11 @@ public class SoundManager : Singleton<SoundManager>
                 break;
             case (int)ESoundType.BtnClicked:
                 {
+                    if (effectON == false)
+                    {
+                        break;
+                    }
+
                     AudioSource audio = audioSources[(int)ESoundType.BtnClicked];
                     AudioClip clip = audioClips[soundNames[(int)ESoundType.BtnClicked]];
                     audio.PlayOneShot(clip);
@@ -73,6 +90,11 @@ public class SoundManager : Singleton<SoundManager>
                 break;
             case (int)ESoundType.BlockRelease:
                 {
+                    if (effectON == false)
+                    {
+                        break;
+                    }
+
                     AudioSource audio = audioSources[(int)ESoundType.BlockRelease];
                     AudioClip clip = audioClips[soundNames[(int)ESoundType.BlockRelease]];
                     audio.PlayOneShot(clip);
@@ -81,6 +103,12 @@ public class SoundManager : Singleton<SoundManager>
             default:
                 break;
         }
+    }
+
+    public bool IsPlayBGM()
+    {
+        AudioSource audio = audioSources[(int)ESoundType.BGM];
+        return audio.isPlaying;
     }
 
     public void Stop(ESoundType soundType)

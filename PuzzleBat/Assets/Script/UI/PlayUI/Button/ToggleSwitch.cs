@@ -15,19 +15,19 @@ public class ToggleSwitch : MonoBehaviour
 
     private void Start()
     {
-        onBtn.SetActive(false);
-        offBtn.SetActive(true);
+        onBtn.SetActive(true);
+        offBtn.SetActive(false);
     }
 
     public void onBtnClicked()
     {
-        onBtn.SetActive(false);
-        offBtn.SetActive(true);
+        onBtn.SetActive(true);
+        offBtn.SetActive(false);
     }
 
     public void offBtnClicked()
     {
-        onBtn.SetActive(true);
-        offBtn.SetActive(false);
+        onBtn.SetActive(false);
+        offBtn.SetActive(true);
     }
 }

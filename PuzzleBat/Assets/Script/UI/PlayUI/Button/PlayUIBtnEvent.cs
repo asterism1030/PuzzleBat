@@ -39,13 +39,24 @@ public class PlayUIBtnEvent : ButtonEvent
 
     public void OnPausePopupBgmTgBtnClicked()
     {
-        //base.OnClicked();
+        base.OnClicked();
 
+        if(SoundManager.Instance.IsPlayBGM() == true)
+        {
+            SoundManager.Instance.BGM_ON = false;
+            SoundManager.Instance.Stop(ESoundType.BGM);
+        }
+        else
+        {
+            SoundManager.Instance.BGM_ON = true;
+            SoundManager.Instance.Play(ESoundType.BGM);
+        }
     }
 
     public void OnPausePopupSoundTgBtnClicked()
     {
-        //base.OnClicked();
+        base.OnClicked();
 
+        SoundManager.Instance.Effect_ON = !SoundManager.Instance.Effect_ON;
     }
 }
