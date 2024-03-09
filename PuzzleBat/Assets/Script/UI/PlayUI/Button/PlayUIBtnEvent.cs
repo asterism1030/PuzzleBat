@@ -37,14 +37,15 @@ public class PlayUIBtnEvent : ButtonEvent
         pauseBtnCollider.SetActive(true);
     }
 
-    // TODO) 구현, 팝업창 띄울 시 뒤의 블록들 클릭 블락 구현
     public void OnPausePopupBgmTgBtnClicked()
     {
+        //base.OnClicked();
 
     }
 
     public void OnPausePopupSoundTgBtnClicked()
     {
+        //base.OnClicked();
 
     }
 }

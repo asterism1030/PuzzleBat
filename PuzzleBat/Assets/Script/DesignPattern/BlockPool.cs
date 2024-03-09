@@ -5,8 +5,6 @@ using UnityEngine;
 
 public class BlockPool : BaseObjectPool
 {
-    
-
     // Action / Func
     public Action<List<int>> EventReleaseEnd; // Release 완료한 블록 열 리스트
 
