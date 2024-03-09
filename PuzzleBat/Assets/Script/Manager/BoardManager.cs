@@ -11,9 +11,12 @@ public class BoardManager : Singleton<BoardManager>
     private int curMap_moveCnt = 10;
     private int curMap_score = 0;
 
+    private bool anyPopupOpen = false;
+
     // getter setter
     public int CurMapMoveCnt { get { return curMap_moveCnt; } set { curMap_moveCnt = value; } }
     public int CurMapScore { get { return curMap_score; } set { curMap_score = value; } }
+    public bool AnyPopupOpen { get { return anyPopupOpen; } set { anyPopupOpen = value; } }
 
     // Action / Func
     public Action<PlayUIHeaderModel> EventHeaderInfoChanged;
@@ -47,5 +50,7 @@ public class BoardManager : Singleton<BoardManager>
     {
         return new PlayUIHeaderModel(curMap_moveCnt, curMap_score);
     }
+
+    
     #endregion
 }

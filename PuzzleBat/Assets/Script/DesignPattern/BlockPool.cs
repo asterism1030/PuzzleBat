@@ -31,7 +31,7 @@ public class BlockPool : BaseObjectPool
     {
         Block block = Pool.Get().GetComponent<Block>();
         block.Init();
-
+        
         return block;
     }
 

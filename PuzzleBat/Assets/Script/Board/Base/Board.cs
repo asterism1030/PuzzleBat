@@ -87,6 +87,11 @@ public class Board : MonoBehaviour
     public virtual void OnMouseBtnUP(RaycastHit2D hit)
     {
         // TODO) 리팩토링 예정
+        if(BoardManager.Instance.AnyPopupOpen == true)
+        {
+            return;
+        }
+
         Block block = hit.transform.GetComponent<Block>();
 
         if(block == null)

@@ -16,6 +16,7 @@ public class PlayUIBtnEvent : ButtonEvent
     {
         base.OnClicked();
 
+        BoardManager.Instance.AnyPopupOpen = true;
         playUI.ActivePausePopup(true);
         pauseBtnCollider.SetActive(false);
     }
@@ -31,6 +32,7 @@ public class PlayUIBtnEvent : ButtonEvent
     {
         base.OnClicked();
 
+        BoardManager.Instance.AnyPopupOpen = false;
         playUI.ActivePausePopup(false);
         pauseBtnCollider.SetActive(true);
     }

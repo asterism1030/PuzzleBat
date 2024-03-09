@@ -22,6 +22,9 @@ public class BaseObjectPool : MonoBehaviour
         }
     }
 
+    /*
+     * TODO) 아이템 종류 만큼의 빈 오브젝트 생성 해야함 (리턴 시 해당 오브젝트 하위 자식으로)
+     */
     protected virtual GameObject CreatePooledItem()
     {
         int rand = Random.Range(0, goPref.Count);
