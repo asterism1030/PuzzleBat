@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Transactions;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -14,7 +15,8 @@ public class BaseObjectPool : MonoBehaviour
     public int maxPoolSize = 100;
 
     // getter setter
-    protected IObjectPool<GameObject> Pool {
+    protected IObjectPool<GameObject> Pool
+    {
         get
         {
             pool = new ObjectPool<GameObject>(CreatePooledItem, OnTakeFromPool, OnReturnedToPool, OnDestroyPoolObject, collectionChecks, defaultCapacity, maxPoolSize);
@@ -22,14 +24,17 @@ public class BaseObjectPool : MonoBehaviour
         }
     }
 
-    /*
-     * TODO) 아이템 종류 만큼의 빈 오브젝트 생성 해야함 (리턴 시 해당 오브젝트 하위 자식으로)
-     */
     protected virtual GameObject CreatePooledItem()
     {
         int rand = Random.Range(0, goPref.Count);
 
-        var obj = Instantiate(goPref[rand], transform);
+        if(transform.Find(goPref[rand].name).childCount != 0)
+        {
+            return transform.Find(goPref[rand].name).GetChild(0).gameObject;
+        }
+
+        var obj = Instantiate(goPref[rand], transform.GetChild(rand).transform);
+        obj.name = goPref[rand].name;
         obj.SetActive(false);
 
         return obj;
@@ -38,7 +43,7 @@ public class BaseObjectPool : MonoBehaviour
     protected virtual void OnReturnedToPool(GameObject go)
     {
         go.SetActive(false);
-        go.transform.SetParent(transform);
+        go.transform.SetParent(transform.Find(go.name).transform);
     }
 
     protected virtual void OnTakeFromPool(GameObject go)
@@ -50,12 +55,4 @@ public class BaseObjectPool : MonoBehaviour
     {
         Destroy(go);
     }
-
-    /*
-     * 
-     * TODO) 리스트의 GO 를 각각 N 개 만큼 생성 후
-     * take 시 랜덤하게 줌
-     * 
-     * 
-     */
 }
