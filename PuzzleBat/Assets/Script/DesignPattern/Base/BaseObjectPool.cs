@@ -28,9 +28,11 @@ public class BaseObjectPool : MonoBehaviour
     {
         int rand = Random.Range(0, goPref.Count);
 
-        if(transform.Find(goPref[rand].name).childCount != 0)
+        Transform randItemFolder = transform.Find(goPref[rand].name);
+
+        if (randItemFolder.childCount != 0)
         {
-            return transform.Find(goPref[rand].name).GetChild(0).gameObject;
+            return randItemFolder.GetChild(0).gameObject;
         }
 
         var obj = Instantiate(goPref[rand], transform.GetChild(rand).transform);

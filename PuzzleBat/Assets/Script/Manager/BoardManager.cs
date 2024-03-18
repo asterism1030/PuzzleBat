@@ -8,7 +8,7 @@ using UnityEngine;
 public class BoardManager : Singleton<BoardManager>
 {
     // 현재 맵의 정보
-    private int curMap_moveCnt = 10;
+    private int curMap_moveCnt = 5;
     private int curMap_score = 0;
 
     private bool anyPopupOpen = false;
@@ -35,7 +35,7 @@ public class BoardManager : Singleton<BoardManager>
     public void Init()
     {
         curMap_score = 0;
-        curMap_moveCnt = 15;
+        curMap_moveCnt = 5;
     }
 
     public void UpdateUIInfo(PlayUIHeaderModel playUIHeaderModel)

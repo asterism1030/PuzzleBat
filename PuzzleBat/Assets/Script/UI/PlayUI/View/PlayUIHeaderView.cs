@@ -17,6 +17,9 @@ public class PlayUIHeaderView : MonoBehaviour
     private void Start()
     {
         BoardManager.Instance.EventHeaderInfoChanged += UpdateView;
+
+        move.text = BoardManager.Instance.CurMapMoveCnt.ToString();
+        score.text = BoardManager.Instance.CurMapScore.ToString();
     }
 
     public void UpdateView(PlayUIHeaderModel playUIHeaderModel)

@@ -48,7 +48,6 @@ public class BlockPool : BaseObjectPool
     #region Etc Function
     private IEnumerator RemoveBlock(List<Block> blocks)
     {
-        //isReleasing = true;
         List<int> emptyCol = new List<int>();
 
         foreach (Block block in blocks)

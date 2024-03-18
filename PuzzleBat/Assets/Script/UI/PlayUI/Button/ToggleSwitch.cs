@@ -10,9 +10,6 @@ public class ToggleSwitch : MonoBehaviour
     [SerializeField]
     private GameObject offBtn;
 
-    //[SerializeField]
-    //private bool 
-
     private void Start()
     {
         onBtn.SetActive(true);
